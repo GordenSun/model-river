@@ -14,6 +14,7 @@
 - 卷首题字、月份刻度、年份章节、卷轴轴杆、星空与年份水印
 
 零依赖：无构建步骤、无框架、无外部 JS 库，字体来自 Google Fonts CDN。
+厂商图标来自 [LobeHub Icons](https://lobehub.com/zh/icons)（[@lobehub/icons-static-svg](https://www.npmjs.com/package/@lobehub/icons-static-svg)，MIT），已内联为单色 SVG。
 
 ## 数据
 
