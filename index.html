@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模型的长河 · River of Models — 知名 AI 大模型发布编年史</title>
+<meta name="description" content="从 ChatGPT (2022.11.30) 到昨日，84 个知名 AI 大模型、13 家实验室、45 个月的发布编年史。日历如画卷展开，模型在发布之日点亮。">
+<meta property="og:title" content="模型的长河 · River of Models">
+<meta property="og:description" content="84 个知名 AI 大模型的发布编年史，一卷展开 2022–2026。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Noto+Serif+SC:wght@400;600;700&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0d14; --bg2:#0e1119;
+  --ink:#ece5d3; --ink-dim:#98917f; --ink-faint:#5f594c;
+  --gold:#e3c07f; --gold-soft:rgba(227,192,127,.55); --gold-dim:rgba(227,192,127,.15);
+  --serif:'Fraunces','Noto Serif SC',serif;
+  --num:'Space Grotesk','Noto Serif SC',sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  background:
+    radial-gradient(1200px 700px at 70% -10%, rgba(64,72,120,.16), transparent 60%),
+    radial-gradient(900px 600px at 12% 110%, rgba(120,86,40,.10), transparent 60%),
+    var(--bg);
+  color:var(--ink); font-family:var(--serif);
+  overflow-x:hidden; -webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(227,192,127,.28); color:#fff}
+
+/* ---------- 星空 ---------- */
+#stars{position:fixed; inset:-40px; z-index:0; pointer-events:none; will-change:transform}
+#stars i{position:absolute; border-radius:50%; background:#dfe6ff; opacity:.5; animation:tw 3.4s ease-in-out infinite alternate}
+@keyframes tw{from{opacity:.08}to{opacity:.65}}
+
+/* ---------- HUD ---------- */
+#hud{
+  position:fixed; top:0; left:0; right:0; height:60px; z-index:60;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 clamp(16px,3vw,36px);
+  background:linear-gradient(180deg, rgba(11,13,20,.82), rgba(11,13,20,.55) 70%, transparent);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+}
+#hud .side{display:flex; align-items:center; gap:12px; min-width:0}
+.seal{width:13px; height:13px; background:var(--gold); transform:rotate(45deg); flex:none;
+  box-shadow:0 0 12px rgba(227,192,127,.7)}
+.hud-title{font-size:14px; font-weight:600; letter-spacing:.12em; white-space:nowrap}
+.hud-title i{display:block; font-style:normal; font-family:var(--num); font-size:8.5px;
+  letter-spacing:.42em; color:var(--ink-dim); margin-top:2px}
+.hud-date{font-family:var(--num); font-size:clamp(14px,1.6vw,18px); letter-spacing:.14em;
+  color:var(--gold); text-shadow:0 0 18px rgba(227,192,127,.35); white-space:nowrap;
+  transition:opacity .25s ease}
+.hud-count{font-size:12px; color:var(--ink-dim); letter-spacing:.08em; white-space:nowrap}
+.hud-count b{font-family:var(--num); font-size:15px; color:var(--ink); font-weight:500}
+#hudProgWrap{position:absolute; left:0; right:0; bottom:0; height:1px; background:rgba(236,229,211,.08)}
+#hudProg{display:block; height:100%; background:linear-gradient(90deg, var(--gold-dim), var(--gold));
+  transform-origin:0 50%; transform:scaleX(0); box-shadow:0 0 8px rgba(227,192,127,.5)}
+
+/* ---------- 年份水印 ---------- */
+#yearGhost{
+  position:fixed; left:50%; top:50%; z-index:1; pointer-events:none;
+  transform:translate(-50%,-52%);
+  font-family:var(--num); font-weight:500;
+  font-size:clamp(180px,32vw,480px); line-height:1;
+  color:rgba(236,229,211,.038); letter-spacing:-.02em;
+  transition:opacity .3s ease; user-select:none;
+}
+#yearGhost.fade{opacity:0}
+
+/* ---------- Hero ---------- */
+#hero{
+  position:relative; height:100vh; z-index:2;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:0 24px;
+}
+.hero-glow{position:absolute; left:50%; top:44%; width:min(760px,90vw); height:min(760px,90vw);
+  transform:translate(-50%,-50%); pointer-events:none;
+  background:radial-gradient(circle, rgba(227,192,127,.09), transparent 62%)}
+.hero-over{font-family:var(--num); font-size:clamp(9px,1vw,11px); letter-spacing:.5em;
+  color:var(--ink-dim); text-indent:.5em; animation:rise 1.1s var(--ease) .15s both}
+#hero h1{
+  margin:26px 0 22px; font-weight:600;
+  font-size:clamp(52px,10vw,132px); line-height:1.05; letter-spacing:.06em;
+  background:linear-gradient(180deg, #f5eeda 30%, #cdbd97 85%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  text-shadow:0 0 60px rgba(227,192,127,.12);
+}
+#hero h1 span{display:inline-block; animation:rise 1.2s var(--ease) both;
+  background:linear-gradient(180deg, #f5eeda 30%, #cdbd97 85%);
+  -webkit-background-clip:text; background-clip:text; color:transparent}
+.hero-sub{font-size:clamp(13px,1.5vw,16px); line-height:2; color:var(--ink-dim);
+  animation:rise 1.2s var(--ease) .55s both}
+.hero-cue{position:absolute; bottom:42px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+  animation:rise 1.2s var(--ease) .9s both}
+.hero-cue span{font-size:11px; letter-spacing:.34em; text-indent:.34em; color:var(--ink-faint)}
+.cue-line{position:relative; width:1px; height:56px; background:rgba(227,192,127,.18); overflow:hidden}
+.cue-dot{position:absolute; left:-1.5px; top:-8px; width:4px; height:8px; border-radius:2px;
+  background:var(--gold); box-shadow:0 0 8px var(--gold); animation:drop 1.8s ease-in infinite}
+@keyframes drop{0%{top:-10px; opacity:0}25%{opacity:1}85%{top:52px; opacity:1}100%{top:60px; opacity:0}}
+@keyframes rise{from{opacity:0; transform:translateY(26px)}to{opacity:1; transform:none}}
+
+/* ---------- 画卷舞台 ---------- */
+#track{position:relative; z-index:2}
+#stage{position:sticky; top:0; height:100vh; overflow:hidden}
+#band{position:absolute; left:0; will-change:transform}
+
+#paper{position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(233,221,195,.062), rgba(233,221,195,.038) 45%, rgba(233,221,195,.058));
+  border-top:1px solid rgba(227,192,127,.30); border-bottom:1px solid rgba(227,192,127,.30);
+}
+#paper::before,#paper::after{content:''; position:absolute; left:0; right:0; height:1px; background:rgba(227,192,127,.13)}
+#paper::before{top:7px} #paper::after{bottom:7px}
+#paper .sheen{position:absolute; inset:0;
+  background:repeating-linear-gradient(90deg, transparent 0 179px, rgba(233,221,195,.016) 179px 180px)}
+
+#scrollTitle{
+  position:absolute; top:50%; transform:translateY(-50%);
+  writing-mode:vertical-rl; letter-spacing:.5em;
+  font-size:clamp(15px,1.8vh,20px); font-weight:600; color:var(--gold);
+  text-shadow:0 0 20px rgba(227,192,127,.4); opacity:.9;
+}
+#scrollTitle small{display:block; font-family:var(--num); font-size:9px; letter-spacing:.3em;
+  color:var(--ink-dim); margin-top:14px}
+
+/* 年份章 */
+.yearGhostB{position:absolute; bottom:14px; transform:translateX(-50%);
+  font-family:var(--num); font-weight:500; font-size:clamp(90px,16vh,150px);
+  color:rgba(236,229,211,.05); user-select:none; letter-spacing:-.02em}
+.yearEra{position:absolute; top:30px; transform:translateX(-50%);
+  font-size:clamp(10px,1.4vh,12.5px); letter-spacing:.4em; text-indent:.4em;
+  color:rgba(227,192,127,.6); white-space:nowrap}
+.yearEra b{font-family:var(--num); font-weight:400; color:var(--ink-dim); letter-spacing:.2em}
+
+/* 网格 & 刻度 */
+.gl{position:absolute; top:0; bottom:0; width:1px; background:rgba(236,229,211,.055)}
+.gl.jan{background:rgba(227,192,127,.16)}
+.tick{position:absolute; top:0; transform:translateX(-50%); text-align:center;
+  opacity:.32; transition:opacity .8s ease, color .8s ease}
+.tick i{display:block; width:1px; height:8px; margin:0 auto 6px; background:var(--ink-dim); transition:background .8s}
+.tick span{font-family:var(--num); font-size:9.5px; letter-spacing:.12em; color:var(--ink-dim)}
+.tick.lit{opacity:1}
+.tick.lit i{background:var(--gold)}
+.tick.lit span{color:var(--gold)}
+
+/* 时间轴 */
+#spine{position:absolute; left:0; height:1px; background:rgba(236,229,211,.13)}
+#spineFill{position:absolute; left:0; top:-0.5px; height:2px; width:0;
+  background:linear-gradient(90deg, rgba(227,192,127,.06), rgba(227,192,127,.85));
+  box-shadow:0 0 10px rgba(227,192,127,.35)}
+
+/* ---------- 模型节点 ---------- */
+.node{position:absolute; z-index:10; --rise:14px}
+.node .dot{
+  position:absolute; left:0; top:0; width:11px; height:11px; border-radius:50%;
+  transform:translate(-50%,-50%) scale(.4);
+  background:var(--vc); opacity:.16;
+}
+.node .dot::after{content:''; position:absolute; inset:-4px; border-radius:50%;
+  border:1px solid var(--vc); opacity:0}
+.node .stem{
+  position:absolute; left:-0.5px; width:1px; top:var(--sy); height:var(--sh);
+  background:linear-gradient(180deg, var(--ga), var(--gb));
+  transform:scaleY(0); opacity:0;
+}
+.node .card{
+  position:absolute; left:0; width:var(--cw);
+  transform:translate(-50%, var(--rise)) scale(.92); opacity:0;
+  background:linear-gradient(180deg, rgba(22,25,38,.94), rgba(14,16,26,.92));
+  border:1px solid color-mix(in srgb, var(--vc) 30%, transparent);
+  border-radius:11px; padding:9px 11px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  cursor:default; transition:border-color .3s;
+}
+.node .card:hover{border-color:color-mix(in srgb, var(--vc) 65%, transparent)}
+.node.up{--rise:16px} .node.down{--rise:-16px}
+.node.up .card{bottom:var(--cy)}
+.node.down .card{top:var(--cy)}
+.node.up .stem{transform-origin:bottom;
+  --ga:transparent; --gb:color-mix(in srgb, var(--vc) 75%, transparent)}
+.node.down .stem{transform-origin:top;
+  --ga:color-mix(in srgb, var(--vc) 75%, transparent); --gb:transparent}
+
+.node.lit .dot{
+  opacity:1; transform:translate(-50%,-50%) scale(1);
+  box-shadow:0 0 14px 2px color-mix(in srgb, var(--vc) 55%, transparent),
+             0 0 34px 6px color-mix(in srgb, var(--vc) 22%, transparent);
+  transition:all .6s var(--ease) var(--d,0ms);
+}
+.node.lit .dot::after{animation:ping 1.15s var(--ease) var(--d,0ms) 1 both}
+.node.lit .stem{opacity:1; transform:scaleY(1); transition:all .55s var(--ease) var(--d,0ms)}
+.node.lit .card{opacity:1; transform:translate(-50%,0) scale(1);
+  transition:opacity .65s var(--ease) var(--d,0ms), transform .75s var(--ease) var(--d,0ms), border-color .3s}
+@keyframes ping{0%{transform:scale(.6); opacity:.9}100%{transform:scale(3.4); opacity:0}}
+
+.c-top{display:flex; align-items:center; gap:7px}
+.c-icon{width:22px; height:22px; flex:none; border-radius:7px;
+  background:color-mix(in srgb, var(--vc) 13%, transparent);
+  display:flex; align-items:center; justify-content:center}
+.c-icon svg{width:14px; height:14px}
+.c-vendor{flex:1; min-width:0; font-size:10px; color:var(--vc); letter-spacing:.05em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.c-date{font-family:var(--num); font-size:9.5px; color:var(--ink-dim); letter-spacing:.04em; white-space:nowrap}
+.c-name{margin-top:7px; font-size:14.5px; font-weight:600; line-height:1.3; letter-spacing:.01em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.c-note{margin-top:2px; font-size:10px; line-height:1.4; color:var(--ink-faint);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+/* ---------- 卷轴 & 未展开遮罩 ---------- */
+#mask{position:absolute; z-index:40; pointer-events:none;
+  background:linear-gradient(90deg, rgba(11,13,20,0) 0, rgba(11,13,20,.96) 30px, var(--bg) 90px)}
+#roller{position:absolute; z-index:41; width:0; pointer-events:none}
+#roller .rod{position:absolute; left:-6.5px; top:0; bottom:0; width:13px; border-radius:7px;
+  background:linear-gradient(90deg, #4e3a20, #d3ab68 42%, #f0d9a0 50%, #b78e4e 60%, #41301b);
+  box-shadow:0 0 22px rgba(227,192,127,.4), 3px 0 14px rgba(0,0,0,.55)}
+#roller .knob{position:absolute; left:-10px; width:20px; height:20px; border-radius:50%;
+  background:radial-gradient(circle at 38% 34%, #f4e2b2, #c49c58 55%, #5e4626);
+  box-shadow:0 0 14px rgba(227,192,127,.55)}
+#roller .knob.top{top:-23px} #roller .knob.bot{bottom:-23px}
+#roller .rodlight{position:absolute; left:-120px; top:0; bottom:0; width:120px;
+  background:radial-gradient(ellipse at 100% 50%, rgba(227,192,127,.13), transparent 70%)}
+
+/* ---------- Outro ---------- */
+#outro{
+  position:relative; z-index:2; min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:80px 24px;
+}
+.out-over{font-family:var(--num); font-size:10px; letter-spacing:.5em; text-indent:.5em; color:var(--ink-dim)}
+#outro h2{margin:24px 0 16px; font-size:clamp(44px,7vw,88px); font-weight:600; letter-spacing:.1em;
+  background:linear-gradient(180deg, #f5eeda 30%, #cdbd97 85%);
+  -webkit-background-clip:text; background-clip:text; color:transparent}
+.out-sub{color:var(--ink-dim); font-size:14px; letter-spacing:.1em}
+.stats{display:flex; gap:clamp(32px,7vw,84px); margin:56px 0 14px}
+.stat b{display:block; font-family:var(--num); font-weight:500; font-size:clamp(38px,5.4vw,62px);
+  color:var(--gold); text-shadow:0 0 30px rgba(227,192,127,.3)}
+.stat span{display:block; margin-top:8px; font-size:12px; letter-spacing:.3em; text-indent:.3em; color:var(--ink-dim)}
+.out-note{margin-top:38px; font-size:11px; color:var(--ink-faint); letter-spacing:.08em; line-height:1.9}
+.out-link{margin-top:22px; font-family:var(--num); font-size:12px; letter-spacing:.14em;
+  color:var(--gold); text-decoration:none; border:1px solid rgba(227,192,127,.35);
+  padding:11px 26px; border-radius:999px; transition:all .35s var(--ease)}
+.out-link:hover{background:rgba(227,192,127,.1); box-shadow:0 0 24px rgba(227,192,127,.25)}
+
+/* ---------- 响应式 ---------- */
+@media (max-width:720px){
+  .hud-title{display:none}
+  .hud-count{font-size:10.5px}
+  #scrollTitle small{display:none}
+  .c-note{display:none}
+}
+@media (max-height:560px){
+  .yearEra{top:16px}
+}
+/* ---------- 减少动效 ---------- */
+@media (prefers-reduced-motion: reduce){
+  #stars i{animation:none}
+  .cue-dot{animation:none}
+  #hero h1 span,.hero-over,.hero-sub,.hero-cue{animation:none}
+  .node.lit .dot::after{animation:none}
+  .node.lit .dot,.node.lit .stem,.node.lit .card{transition-duration:.01s; transition-delay:0ms}
+}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+
+<header id="hud">
+  <div class="side left">
+    <span class="seal"></span>
+    <span class="hud-title">模型的长河<i>RIVER OF MODELS</i></span>
+  </div>
+  <div class="hud-date" id="hudDate">2022 年 11 月</div>
+  <div class="side right">
+    <span class="hud-count"><b id="hudCount">0</b> / 84 盏已点亮</span>
+  </div>
+  <div id="hudProgWrap"><i id="hudProg"></i></div>
+</header>
+
+<div id="yearGhost">2022</div>
+
+<main>
+  <section id="hero">
+    <div class="hero-glow"></div>
+    <p class="hero-over">A SCROLL OF FOUNDATION MODELS · 2022 — 2026</p>
+    <h1 id="heroTitle">模型的长河</h1>
+    <p class="hero-sub">自 ChatGPT 问世，到昨日 Kimi K3 发布——<br>84 个知名模型 · 13 家实验室 · 45 个月，尽在此卷。</p>
+    <div class="hero-cue"><span>向下滚动 · 徐徐展开</span><i class="cue-line"><i class="cue-dot"></i></i></div>
+  </section>
+
+  <div id="track">
+    <div id="stage">
+      <div id="band">
+        <div id="paper"><i class="sheen"></i></div>
+        <div id="years"></div>
+        <div id="grid"></div>
+        <div id="ruler"></div>
+        <div id="spine"><div id="spineFill"></div></div>
+        <div id="nodes"></div>
+        <div id="scrollTitle">模型的长河<small>RIVER OF MODELS · 卷首</small></div>
+        <div id="mask"></div>
+        <div id="roller"><i class="rodlight"></i><i class="rod"></i><i class="knob top"></i><i class="knob bot"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <section id="outro">
+    <p class="out-over">TO BE CONTINUED</p>
+    <h2>长卷未竟</h2>
+    <p class="out-sub">下一个改变格局的模型，也许就在明天发布。</p>
+    <div class="stats">
+      <div class="stat"><b data-n="84">0</b><span>知名模型</span></div>
+      <div class="stat"><b data-n="13">0</b><span>实验室</span></div>
+      <div class="stat"><b data-n="45">0</b><span>个月</span></div>
+    </div>
+    <p class="out-note">数据整理自各厂商公开发布与报道 · 截至 2026-07-16 · 标「约」者为月份级估计<br>收录范围为知名基础模型与旗舰模型，不含专用小模型</p>
+    <a class="out-link" href="https://github.com/GordenSun/model-river/blob/main/MODELS.md" target="_blank" rel="noopener">查看完整数据 · GitHub</a>
+  </section>
+</main>
+
+<script>
+(function(){
+'use strict';
+/* ================= 厂商 ================= */
+const VENDORS={
+openai:{label:'OpenAI',color:'#41d9ac',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 4c1.7 2.3 1.7 13.7 0 16"/><path d="M12 4c1.7 2.3 1.7 13.7 0 16" transform="rotate(60 12 12)"/><path d="M12 4c1.7 2.3 1.7 13.7 0 16" transform="rotate(120 12 12)"/></svg>'},
+anthropic:{label:'Anthropic',color:'#ed9c6f',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3.5 12 20"/><path d="M12 3.5 8.2 20"/><path d="M12 3.5 15.8 20"/><path d="M12 3.5 4.6 16.5"/><path d="M12 3.5 19.4 16.5"/><path d="M12 3.5 2.8 11"/><path d="M12 3.5 21.2 11"/></svg>'},
+google:{label:'Google',color:'#9db9ff',icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5c.9 5.3 4.2 8.6 9.5 9.5-5.3.9-8.6 4.2-9.5 9.5-.9-5.3-4.2-8.6-9.5-9.5 5.3-.9 8.6-4.2 9.5-9.5Z"/></svg>'},
+meta:{label:'Meta',color:'#4f97f5',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2.6 12c0-3.1 1.8-5.1 4.1-5.1 3.5 0 4.6 10.2 8.6 10.2 2.3 0 4.1-2 4.1-5.1s-1.8-5.1-4.1-5.1c-4 0-5.1 10.2-8.6 10.2-2.3 0-4.1-2-4.1-5.1Z"/></svg>'},
+deepseek:{label:'DeepSeek',color:'#7384ff',icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 14.6c0-4.3 3.9-7.1 8.2-7.1 2.5 0 4.7.9 6.1 2.4l3.4-2.1-1.1 3.6c.3.7.4 1.4.4 2 0 4.2-4.1 6.6-8.7 6.6S3 18.2 3 14.6Z"/><circle cx="8.2" cy="12.4" r="1" fill="#0b0d14"/></svg>'},
+xai:{label:'xAI',color:'#e9eaf0',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4.5 3.8 19.5 20.2"/><path d="M19.5 3.8 12.2 11.1"/><path d="M9.6 13.7 4.5 20.2"/></svg>'},
+mistral:{label:'Mistral AI',color:'#ffa94d',icon:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="12" width="2.5" height="8" rx="0.8"/><rect x="7.4" y="6" width="2.5" height="14" rx="0.8"/><rect x="11.8" y="14" width="2.5" height="6" rx="0.8"/><rect x="16.2" y="6" width="2.5" height="14" rx="0.8"/><rect x="20.6" y="12" width="2.5" height="8" rx="0.8"/></svg>'},
+qwen:{label:'阿里巴巴',color:'#a985ff',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="7"/><path d="M15.6 15.6 20.6 20.6"/></svg>'},
+moonshot:{label:'月之暗面',color:'#ffd166',icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.4 14.2A8.6 8.6 0 1 1 9.8 3.6a7 7 0 0 0 10.6 10.6Z"/></svg>'},
+zhipu:{label:'智谱 AI',color:'#4cc9f0',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 2.8 19.6 7v10L12 21.2 4.4 17V7L12 2.8Z"/><path d="M8.7 9.2h6.6l-6.6 5.6h6.6" stroke-linecap="round"/></svg>'},
+baidu:{label:'百度',color:'#8a9bff',icon:'<svg viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="15.6" rx="4.5" ry="3.7"/><ellipse cx="6.1" cy="9.9" rx="1.7" ry="2.3" transform="rotate(-16 6.1 9.9)"/><ellipse cx="12" cy="7.7" rx="1.8" ry="2.4"/><ellipse cx="17.9" cy="9.9" rx="1.7" ry="2.3" transform="rotate(16 17.9 9.9)"/></svg>'},
+minimax:{label:'MiniMax',color:'#ff6e84',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 20V4.8l7.8 8.6 7.8-8.6V20"/></svg>'},
+thinking:{label:'Thinking Machines',color:'#dcb8ff',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11.5" cy="12.5" r="7.2"/><circle cx="17.6" cy="6.4" r="2.3" fill="currentColor" stroke="none"/></svg>'}
+};
+/* ================= 模型数据（2022-11-30 → 2026-07-16） ================= */
+const MODELS=[
+{d:'2022-11-30',m:'ChatGPT (GPT-3.5)',v:'openai',n:'对话式 AI 元年开启'},
+{d:'2023-02-24',m:'LLaMA',v:'meta',n:'开源大模型起点'},
+{d:'2023-03-14',m:'GPT-4',v:'openai',n:'能力跃迁，初步多模态'},
+{d:'2023-03-14',m:'Claude',v:'anthropic',n:'Anthropic 首秀'},
+{d:'2023-03-16',m:'文心一言',v:'baidu',n:'国内首个类 ChatGPT'},
+{d:'2023-04-11',m:'通义千问',v:'qwen',n:'阿里入局'},
+{d:'2023-05-10',m:'PaLM 2',v:'google',n:'谷歌的反击'},
+{d:'2023-07-11',m:'Claude 2',v:'anthropic',n:'100K 上下文'},
+{d:'2023-07-18',m:'Llama 2',v:'meta',n:'开源可商用，生态爆发'},
+{d:'2023-09-25',m:'GPT-4V',v:'openai',n:'模型看见世界'},
+{d:'2023-09-27',m:'Mistral 7B',v:'mistral',n:'欧洲开源小钢炮'},
+{d:'2023-11-06',m:'GPT-4 Turbo',v:'openai',n:'128K 上下文，大幅降价'},
+{d:'2023-12-06',m:'Gemini 1.0',v:'google',n:'原生多模态'},
+{d:'2023-12-11',m:'Mixtral 8x7B',v:'mistral',n:'开源 MoE 标杆'},
+{d:'2024-01-16',m:'GLM-4',v:'zhipu',n:'国产第一梯队'},
+{d:'2024-02-15',m:'Gemini 1.5 Pro',v:'google',n:'百万 token 时代'},
+{d:'2024-02-26',m:'Mistral Large',v:'mistral',n:'欧洲旗舰'},
+{d:'2024-03-04',m:'Claude 3 系列',v:'anthropic',n:'Haiku/Sonnet/Opus 三档齐发'},
+{d:'2024-04-18',m:'Llama 3',v:'meta',n:'开源新王'},
+{d:'2024-05-09',m:'DeepSeek-V2',v:'deepseek',n:'价格战发动者'},
+{d:'2024-05-13',m:'GPT-4o',v:'openai',n:'原生全模态'},
+{d:'2024-05-14',m:'Gemini 1.5 Flash',v:'google',n:'轻快先锋'},
+{d:'2024-06-20',m:'Claude 3.5 Sonnet',v:'anthropic',n:'编码新标杆'},
+{d:'2024-07-18',m:'GPT-4o mini',v:'openai',n:'小模型大流行'},
+{d:'2024-07-23',m:'Llama 3.1 405B',v:'meta',n:'开源进入前沿级'},
+{d:'2024-08-13',m:'Grok 2',v:'xai',n:'xAI 提速'},
+{d:'2024-09-12',m:'o1-preview',v:'openai',n:'推理时代开幕'},
+{d:'2024-09-19',m:'Qwen2.5',v:'qwen',n:'开源全家桶'},
+{d:'2024-12-05',m:'o1',v:'openai',n:'推理正式版'},
+{d:'2024-12-06',m:'Llama 3.3',v:'meta',n:'小巧高能'},
+{d:'2024-12-11',m:'Gemini 2.0 Flash',v:'google',n:'为智能体时代而生'},
+{d:'2024-12-26',m:'DeepSeek-V3',v:'deepseek',n:'极致性价比震动业界'},
+{d:'2025-01-20',m:'DeepSeek-R1',v:'deepseek',n:'出圈之夜，推理平权'},
+{d:'2025-01-27',m:'Qwen2.5-Max',v:'qwen',n:'阿里旗舰 MoE'},
+{d:'2025-01-31',m:'o3-mini',v:'openai',n:'推理能力下放'},
+{d:'2025-02-17',m:'Grok 3',v:'xai',n:'20 万 GPU 堆出的巨兽'},
+{d:'2025-02-24',m:'Claude 3.7 Sonnet',v:'anthropic',n:'首个混合推理模型'},
+{d:'2025-02-27',m:'GPT-4.5',v:'openai',n:'预训练收官之作'},
+{d:'2025-03-25',m:'Gemini 2.5 Pro',v:'google',n:'思考模型登顶'},
+{d:'2025-04-05',m:'Llama 4 系列',v:'meta',n:'原生多模态 MoE'},
+{d:'2025-04-14',m:'GPT-4.1',v:'openai',n:'百万上下文 API'},
+{d:'2025-04-16',m:'o3 / o4-mini',v:'openai',n:'会用工具的推理'},
+{d:'2025-04-29',m:'Qwen3',v:'qwen',n:'混合推理开源'},
+{d:'2025-05-22',m:'Claude 4 系列',v:'anthropic',n:'智能体编码时代'},
+{d:'2025-06-17',m:'Gemini 2.5 Flash',v:'google',n:'思考型轻骑兵'},
+{d:'2025-07-09',m:'Grok 4',v:'xai',n:'多智能体推理'},
+{d:'2025-07-11',m:'Kimi K2',v:'moonshot',n:'开源 Agentic 里程碑'},
+{d:'2025-08-05',m:'Claude Opus 4.1',v:'anthropic',n:'稳步精进'},
+{d:'2025-08-07',m:'GPT-5',v:'openai',n:'统一系统登场'},
+{d:'2025-08-21',m:'DeepSeek-V3.1',v:'deepseek',n:'混合推理架构'},
+{d:'2025-09-29',m:'Claude Sonnet 4.5',v:'anthropic',n:'当时最佳编码模型'},
+{d:'2025-09-30',m:'GLM-4.6',v:'zhipu',n:'智能体能力强化'},
+{d:'2025-11-06',m:'Kimi K2 Thinking',v:'moonshot',n:'会思考的开源模型'},
+{d:'2025-11-12',m:'GPT-5.1',v:'openai',n:'更懂对话'},
+{d:'2025-11-17',m:'Grok 4.1',v:'xai',n:'xAI 快速迭代'},
+{d:'2025-11-18',m:'Gemini 3 Pro',v:'google',n:'谷歌重回王座'},
+{d:'2025-11-24',m:'Claude Opus 4.5',v:'anthropic',n:'大幅降价的旗舰'},
+{d:'2025-12-01',m:'DeepSeek-V3.2',v:'deepseek',n:'DSA 稀疏注意力'},
+{d:'2025-12-11',m:'GPT-5.2',v:'openai',n:'「红色警报」后的反击'},
+{d:'2025-12-17',m:'Gemini 3 Flash',v:'google',n:'前沿速度版'},
+{d:'2026-01-27',m:'Kimi K2.5',v:'moonshot',n:'万亿参数开源'},
+{d:'2026-02-05',m:'Claude Opus 4.6',v:'anthropic',n:'Agent Teams 登场'},
+{d:'2026-02-10',m:'GLM-5',v:'zhipu',n:'智谱新旗舰，开源登顶',apx:1},
+{d:'2026-02-17',m:'Claude Sonnet 4.6',v:'anthropic',n:'均衡之选'},
+{d:'2026-02-19',m:'Gemini 3.1 Pro',v:'google',n:'推理再翻倍'},
+{d:'2026-02-24',m:'Grok 4.20',v:'xai',n:'2M 上下文',apx:1},
+{d:'2026-03-03',m:'DeepSeek V4',v:'deepseek',n:'国产新旗舰'},
+{d:'2026-03-05',m:'GPT-5.4',v:'openai',n:'原生电脑操作'},
+{d:'2026-03-30',m:'Qwen 3.6 Plus',v:'qwen',n:'跨入 1M 俱乐部'},
+{d:'2026-04-08',m:'Muse Spark',v:'meta',n:'Meta 首个闭源前沿模型'},
+{d:'2026-04-16',m:'Claude Opus 4.7',v:'anthropic',n:'Opus 快速迭代'},
+{d:'2026-04-20',m:'Kimi K2.6',v:'moonshot',n:'编程强化'},
+{d:'2026-04-23',m:'GPT-5.5',v:'openai',n:'半年三级跳'},
+{d:'2026-04-24',m:'DeepSeek V4 Pro',v:'deepseek',n:'1.6T 参数'},
+{d:'2026-05-28',m:'Claude Opus 4.8',v:'anthropic',n:'Fable 的前奏'},
+{d:'2026-05-31',m:'MiniMax M3',v:'minimax',n:'1M 上下文黑马'},
+{d:'2026-06-09',m:'Claude Fable 5',v:'anthropic',n:'首个公开 Mythos 级模型'},
+{d:'2026-06-12',m:'Kimi K2.7',v:'moonshot',n:'开源编程利器'},
+{d:'2026-06-16',m:'GLM-5.2',v:'zhipu',n:'开源编码旗舰'},
+{d:'2026-07-08',m:'Grok 4.5',v:'xai',n:'xAI 年中旗舰'},
+{d:'2026-07-09',m:'GPT-5.6',v:'openai',n:'OpenAI 最新旗舰'},
+{d:'2026-07-09',m:'Muse Spark 1.1',v:'meta',n:'Meta 首个付费模型 API'},
+{d:'2026-07-15',m:'Inkling',v:'thinking',n:'975B 开源新星'},
+{d:'2026-07-16',m:'Kimi K3',v:'moonshot',n:'LatentMoE 架构，2.8T'}
+];
+const ERAS={2022:'序章 · 星火',2023:'第壹章 · 寒武纪',2024:'第贰章 · 混战',2025:'第叁章 · 推理纪元',2026:'第肆章 · 智能体浪潮'};
+
+/* ================= 工具 ================= */
+const $=s=>document.querySelector(s);
+const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MONTHS=[];{let y=2022,m=11;for(;;){MONTHS.push({y,m});if(y===2026&&m===7)break;m++;if(m>12){m=1;y++}}}
+const dim=(y,m)=>new Date(y,m,0).getDate();
+
+const band=$('#band'),gridEl=$('#grid'),rulerEl=$('#ruler'),yearsEl=$('#years'),
+nodesEl=$('#nodes'),spineEl=$('#spine'),spineFill=$('#spineFill'),maskEl=$('#mask'),
+rollerEl=$('#roller'),trackEl=$('#track'),starsEl=$('#stars'),hudDate=$('#hudDate'),
+hudCount=$('#hudCount'),hudProg=$('#hudProg'),ghostEl=$('#yearGhost'),scrollTitle=$('#scrollTitle');
+
+/* 星空 */
+if(!REDUCED){let sh='';for(let i=0;i<80;i++){
+  const sx=(Math.random()*104-2).toFixed(1),sy=(Math.random()*108-4).toFixed(1),ss=(Math.random()*1.6+0.6).toFixed(1);
+  sh+='<i style="left:'+sx+'%;top:'+sy+'%;width:'+ss+'px;height:'+ss+'px;animation-delay:'+(Math.random()*3.4).toFixed(2)+'s;animation-duration:'+(Math.random()*2.6+2.2).toFixed(2)+'s"></i>';
+}starsEl.innerHTML=sh;}
+
+/* Hero 标题逐字 */
+{const t=$('#heroTitle');const chars=[...t.textContent];
+ t.innerHTML=chars.map((c,i)=>'<span style="animation-delay:'+(0.15+i*0.09)+'s">'+c+'</span>').join('');}
+
+/* ================= 布局 ================= */
+let vw,vh,W,trackTop,maxRod=0,cur=0,litPtr=0,litTotal=0;
+let monthInfo=[],nodeRefs=[],tickRefs=[];
+
+function layout(){
+  vw=innerWidth; vh=innerHeight;
+  const mobile=vw<720;
+  const scale=mobile?0.62:1;
+  const cw=mobile?140:168;
+  const leftPad=Math.round(vw*0.42), rightPad=Math.round(vw*0.72);
+  const bandH=Math.round(Math.max(480,Math.min(vh*0.74,720)));
+  const bandTop=Math.round((vh-bandH)/2)+6;
+  const spineY=Math.round(bandH/2);
+  const cardH=mobile?64:80, laneH=mobile?76:90, gapTop=mobile?24:28;
+  const avail=spineY-56;
+  const lanesPerSide=Math.max(1,Math.floor((avail-gapTop-cardH)/laneH)+1);
+
+  const perMonth=new Array(MONTHS.length).fill(0);
+  const parsed=MODELS.map(o=>{
+    const p=o.d.split('-');const y=+p[0],mo=+p[1],dd=+p[2];
+    const idx=(y-2022)*12+(mo-11); perMonth[idx]++;
+    return Object.assign({},o,{y:y,mo:mo,dd:dd,idx:idx});
+  });
+  const mw=c=>Math.round((c===0?150:(186+(c-1)*54+(c>3?(c-3)*24:0)))*scale);
+  monthInfo=[]; let x=leftPad;
+  MONTHS.forEach((mm,i)=>{const w=mw(perMonth[i]);monthInfo.push({x:x,w:w,y:mm.y,m:mm.m});x+=w;});
+  W=x+rightPad;
+
+  band.style.top=bandTop+'px'; band.style.height=bandH+'px'; band.style.width=W+'px';
+  spineEl.style.top=spineY+'px'; spineEl.style.width=W+'px';
+  maskEl.style.top=(-vh*0.12)+'px'; maskEl.style.height=(bandH+vh*0.24)+'px';
+  rollerEl.style.top='-18px'; rollerEl.style.height=(bandH+36)+'px';
+  scrollTitle.style.left=Math.round(leftPad*0.36)+'px';
+  nodesEl.style.setProperty('--cw',cw+'px');
+
+  let g='',r='';
+  monthInfo.forEach(mi=>{
+    g+='<i class="gl'+(mi.m===1?' jan':'')+'" style="left:'+mi.x+'px"></i>';
+    const label=mi.m===1?(mi.m+'月 \u2019'+String(mi.y).slice(2)):(mi.m+'月');
+    r+='<div class="tick" data-x="'+(mi.x+mi.w*0.5)+'" style="left:'+(mi.x+mi.w/2)+'px;top:14px"><i></i><span>'+label+'</span></div>';
+  });
+  gridEl.innerHTML=g; rulerEl.innerHTML=r;
+
+  let yhtml='';
+  for(let i=0;i<monthInfo.length;i++){
+    if(monthInfo[i].m===1){
+      const y=monthInfo[i].y; let end=W-rightPad;
+      for(let j=i+1;j<monthInfo.length;j++){if(monthInfo[j].m===1){end=monthInfo[j].x;break;}}
+      const cx=(monthInfo[i].x+end)/2;
+      yhtml+='<div class="yearGhostB" style="left:'+cx+'px">'+y+'</div><div class="yearEra" style="left:'+cx+'px">'+(ERAS[y]||'')+' <b>'+y+'</b></div>';
+    }
+  }
+  yhtml+='<div class="yearEra" style="left:'+(monthInfo[0].x+monthInfo[0].w/2)+'px">'+ERAS[2022]+' <b>2022</b></div>';
+  yearsEl.innerHTML=yhtml;
+
+  const lanes=[];
+  for(let i=0;i<lanesPerSide;i++){lanes.push({side:'up',i:i,last:-1e9});lanes.push({side:'down',i:i,last:-1e9});}
+  const minGap=cw+14;
+  let nhtml=''; nodeRefs=[];
+  parsed.forEach(o=>{
+    const mi=monthInfo[o.idx];
+    const nx=Math.round(mi.x+((o.dd-0.5)/dim(o.y,o.mo))*mi.w);
+    let lane=null;
+    for(const l of lanes){if(nx-l.last>=minGap){lane=l;break;}}
+    if(!lane){lane=lanes.reduce((a,b)=>a.last<b.last?a:b);}
+    lane.last=nx;
+    const vd=VENDORS[o.v];
+    const dist=gapTop+lane.i*laneH;
+    const cy=dist;
+    const sy=lane.side==='up'?-dist:0;
+    const dateStr=o.apx?(o.y+'.'+String(o.mo).padStart(2,'0')+' · 约'):(o.y+'.'+String(o.mo).padStart(2,'0')+'.'+String(o.dd).padStart(2,'0'));
+    nhtml+='<div class="node '+lane.side+'" style="left:'+nx+'px;top:'+spineY+'px;--vc:'+vd.color+';--cy:'+cy+'px;--sy:'+sy+'px;--sh:'+dist+'px">'
+      +'<i class="dot"></i><i class="stem"></i>'
+      +'<div class="card"><div class="c-top"><span class="c-icon" style="color:'+vd.color+'">'+vd.icon+'</span><span class="c-vendor">'+vd.label+'</span><span class="c-date">'+dateStr+'</span></div>'
+      +'<div class="c-name">'+o.m+'</div>'
+      +'<div class="c-note">'+(o.n||'')+'</div></div></div>';
+    nodeRefs.push({x:nx});
+  });
+  nodesEl.innerHTML=nhtml;
+  nodeRefs.forEach((rr,i)=>{rr.el=nodesEl.children[i];});
+  tickRefs=[...rulerEl.children].map(el=>({el:el,x:+el.dataset.x,lit:false}));
+
+  trackEl.style.height=(W-vw+vh)+'px';
+  trackTop=trackEl.offsetTop;
+
+  litPtr=0; litTotal=0;
+  nodeRefs.forEach(rr=>{
+    if(rr.x<=maxRod){rr.el.style.setProperty('--d','0ms');rr.el.classList.add('lit');litPtr++;litTotal++;}
+  });
+  tickRefs.forEach(t=>{if(t.x<=maxRod){t.el.classList.add('lit');t.lit=true;}});
+  hudCount.textContent=litTotal;
+}
+
+/* ================= 镜头 ================= */
+let ghostYear='';
+function frame(){
+  const maxCur=Math.max(W-vw,0);
+  const target=Math.min(Math.max(scrollY-trackTop,0),maxCur);
+  cur+=(target-cur)*(REDUCED?1:0.085);
+  if(Math.abs(target-cur)<0.15)cur=target;
+  band.style.transform='translate3d('+(-cur)+'px,0,0)';
+  starsEl.style.transform='translate3d('+(-cur*0.1)+'px,0,0)';
+  const rodX=Math.min(Math.max(cur+vw*0.62,0),W);
+  if(rodX>maxRod)maxRod=rodX;
+  maskEl.style.left=rodX+'px'; maskEl.style.width=(W-rodX+600)+'px';
+  rollerEl.style.left=rodX+'px';
+  spineFill.style.width=rodX+'px';
+  hudProg.style.transform='scaleX('+(maxCur?cur/maxCur:0)+')';
+
+  const midX=cur+vw*0.5;
+  let mi=0; for(let i=0;i<monthInfo.length;i++){if(monthInfo[i].x<=midX)mi=i;else break;}
+  const mm=monthInfo[mi];
+  if(mm){
+    hudDate.textContent=mm.y+' 年 '+mm.m+' 月';
+    const ys=String(mm.y);
+    if(ys!==ghostYear){ghostYear=ys;ghostEl.classList.add('fade');
+      setTimeout(()=>{ghostEl.textContent=ys;ghostEl.classList.remove('fade');},REDUCED?0:260);}
+  }
+
+  let batch=0;
+  while(litPtr<nodeRefs.length&&nodeRefs[litPtr].x<=rodX+8){
+    const rr=nodeRefs[litPtr];
+    rr.el.style.setProperty('--d',(batch*70)+'ms');
+    rr.el.classList.add('lit');
+    litPtr++;litTotal++;batch++;
+  }
+  if(batch)hudCount.textContent=litTotal;
+  for(const t of tickRefs){if(!t.lit&&t.x<=rodX){t.el.classList.add('lit');t.lit=true;}}
+
+  requestAnimationFrame(frame);
+}
+
+/* Outro 数字滚动 */
+{const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){io.disconnect();
+  document.querySelectorAll('.stat b').forEach(b=>{
+    const n=+b.dataset.n,t0=performance.now();
+    (function step(t){const p=Math.min((t-t0)/1300,1);b.textContent=Math.round(n*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(step);})(t0);
+  });}})},{threshold:0.4});
+ io.observe($('.stats'));}
+
+/* 横向滚轮 → 纵向 */
+addEventListener('wheel',e=>{if(Math.abs(e.deltaX)>Math.abs(e.deltaY))scrollBy(0,e.deltaX*1.5);},{passive:true});
+
+/* 视口变化 */
+let rzT;addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(layout,220);});
+
+layout();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
